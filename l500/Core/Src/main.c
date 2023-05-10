@@ -56,7 +56,7 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
+void UARTInterruptConfig();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -98,6 +98,7 @@ int main(void)
   uint8_t text[] = "Menu\n0: LED Control\na: Speed Up +1Hz\ns: Speed Down -1Hz\nd: On/Off\nx: Back\n1: Button Status\nx: Back\n";
   HAL_UART_Transmit(&huart2, text, 120, 10);
 
+  UARTInterruptConfig();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -247,7 +248,23 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void UARTInterruptConfig()
+{
+	HAL_UART_Receive_IT(&huart2, RxBuffer, 1);
+}
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart == &huart2)
+	{
+		RxBuffer[1] = '\0';
+
+		sprintf((char*)TxBuffer,"Received : %s\r\n",RxBuffer);
+		HAL_UART_Transmit_IT(&huart2, TxBuffer, strlen((char*)TxBuffer));
+
+		HAL_UART_Receive_IT(&huart2, RxBuffer, 1);
+	}
+}
 /* USER CODE END 4 */
 
 /**
