@@ -47,7 +47,8 @@ DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
 uint8_t RxBuffer[20];
-uint8_t TxBuffer[40];
+uint8_t TxBuffer[20];
+int State = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,6 +58,7 @@ static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void UARTInterruptConfig();
+void Task();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -95,8 +97,8 @@ int main(void)
   MX_DMA_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t text[] = "Menu\n0: LED Control\na: Speed Up +1Hz\ns: Speed Down -1Hz\nd: On/Off\nx: Back\n1: Button Status\nx: Back\n";
-  HAL_UART_Transmit(&huart2, text, 120, 10);
+  uint8_t text[] = "Menu\r\n0: LED Control\r\n  a: Speed Up +1Hz\r\n  s: Speed Down -1Hz\r\n  d: On/Off\r\n  x: Back\r\n1: Button Status\r\n  x: Back\r\n";
+  HAL_UART_Transmit(&huart2, text, 200, 10);
 
   UARTInterruptConfig();
   /* USER CODE END 2 */
@@ -108,6 +110,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  static uint32_t timestamp = 0;
+	  if(HAL_GetTick() >= timestamp)
+	  {
+		  timestamp = HAL_GetTick()+100;
+		  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+//		  Task();
+
+	  }
   }
   /* USER CODE END 3 */
 }
@@ -236,8 +246,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pin : PA0 LD2_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -265,6 +275,48 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		HAL_UART_Receive_IT(&huart2, RxBuffer, 1);
 	}
 }
+
+void Task()
+{
+	switch(State)
+	{
+		default:
+		case 0:
+			if(RxBuffer[0] == 0){State = 1;}
+			else if(RxBuffer[0] == 1){State = 2;}
+		break;
+		case 1:
+			if(RxBuffer[0] == a)
+			{
+
+				State = 1;
+			}
+			else if(RxBuffer[0] == s)
+			{
+
+				State = 1;
+			}
+			else if(RxBuffer[0] == d)
+			{
+
+				State = 1;
+			}
+			else if(RxBuffer[0] == x)
+			{
+
+				State = 0;
+			}
+		break;
+		case 2:
+			if(RxBuffer[0] == x)
+			{
+
+				State = 0;
+			}
+		break;
+	}
+}
+
 /* USER CODE END 4 */
 
 /**
