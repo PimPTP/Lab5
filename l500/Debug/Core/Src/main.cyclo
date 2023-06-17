@@ -5,5 +5,5 @@ main.c:207:13:MX_DMA_Init	1
 main.c:228:13:MX_GPIO_Init	1
 main.c:261:6:UARTInterruptConfig	1
 main.c:266:6:HAL_UART_RxCpltCallback	2
-main.c:279:6:Task	1
-main.c:326:6:Error_Handler	1
+main.c:279:6:Task	10
+main.c:327:6:Error_Handler	1

@@ -115,7 +115,7 @@ int main(void)
 	  {
 		  timestamp = HAL_GetTick()+100;
 		  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-//		  Task();
+		  Task();
 
 	  }
   }
@@ -246,8 +246,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA0 LD2_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|LD2_Pin;
+  /*Configure GPIO pin : LD2_Pin */
+  GPIO_InitStruct.Pin = LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -282,33 +282,34 @@ void Task()
 	{
 		default:
 		case 0:
-			if(RxBuffer[0] == 0){State = 1;}
-			else if(RxBuffer[0] == 1){State = 2;}
+			if(RxBuffer[0] == 48){State = 1;} //0
+			else if(RxBuffer[0] == 49){State = 2;} //1
 		break;
 		case 1:
-			if(RxBuffer[0] == a)
+			if(RxBuffer[0] == 97) //a
 			{
 
 				State = 1;
 			}
-			else if(RxBuffer[0] == s)
+			else if(RxBuffer[0] == 115) //s
 			{
 
 				State = 1;
 			}
-			else if(RxBuffer[0] == d)
+			else if(RxBuffer[0] == 100) //d
 			{
 
 				State = 1;
 			}
-			else if(RxBuffer[0] == x)
+			else if(RxBuffer[0] == 120) //x
 			{
 
 				State = 0;
 			}
 		break;
 		case 2:
-			if(RxBuffer[0] == x)
+
+			if(RxBuffer[0] == 120) //x
 			{
 
 				State = 0;
